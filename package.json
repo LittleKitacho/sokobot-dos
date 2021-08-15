@@ -1,0 +1,21 @@
+{
+  "name": "sokobot-dos",
+  "version": "1.0.0",
+  "description": "",
+  "main": "start.js",
+  "scripts": {
+    "start": "start.js"
+  },
+  "author": "LittleKitacho",
+  "license": "MIT",
+  "dependencies": {
+    "discord.js": "^13.0.1",
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.13",
+    "@typescript-eslint/eslint-plugin": "^4.29.1",
+    "@typescript-eslint/parser": "^4.29.1",
+    "typescript": "^4.3.5"
+  }
+}

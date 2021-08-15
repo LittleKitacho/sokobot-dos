@@ -1,0 +1,47 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "shell",
+			"command": "tsc",
+			"problemMatcher": [
+				"$tsc"
+			],
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"label": "tsc: build",
+			"presentation": {
+				"close": true,
+				"reveal": "silent",
+				"revealProblems": "onProblem"
+			}
+		}, {
+			"type": "shell",
+			"command": "tsc",
+			"args": ["-w"],
+			"problemMatcher": [ "$tsc-watch" ],
+			"group": "build",
+			"label": "tsc: watch",
+			"presentation": {
+				"close": true,
+				"reveal": "always",
+				"revealProblems": "never",
+				"showReuseMessage": false,
+				"clear": true
+			}
+		}, {
+			"type": "shell",
+			"command": "npx",
+			"args": ["eslint", "."],
+			"group": "none",
+			"label": "eslint: lint",
+			"presentation": {
+				"reveal": "silent",
+				"revealProblems": "onProblem",
+				"clear": true
+			}
+		}
+	]
+}
