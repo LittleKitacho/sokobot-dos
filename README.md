@@ -29,7 +29,7 @@ install Node.JS, then create a bot in the [Discord Developer Portal](https://dis
 and copy the token into a file named `token` (note: no file extension) in the
 root directory of the bot.  Install the dependancies with `npm i --only=prod`
 and start the bot with `npm start`.  You should see a lot of `Registering
-command (command)', which is normal.  The bot registers all unregistered
+command (command)`, which is normal.  The bot registers all unregistered
 commands on startup.
 
 A webserver is automatically opened at `localhost:8000` ([click here to go there](https://localhost:8000)),
