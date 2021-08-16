@@ -75,4 +75,9 @@ typings/
 # FuseBox cache
 .fusebox/
 
+# TypeScript output
 js/**
+
+# Bot token file
+token
+
