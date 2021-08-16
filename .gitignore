@@ -81,3 +81,9 @@ js/**
 # Bot token file
 token
 
+# Database files
+userbank.json
+userlevel.json
+
+# Log files
+log

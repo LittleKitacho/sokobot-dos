@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Sokobot Dos Dashboard</title>
+        <script>
+            function reloadCommand() {
+                var command = document.getElementById("reload").value;
+                window.location.pathname = "/reload/" + command;
+            }
+        </script>
+    </head>
+    <body>
+        <h1>Sokobot Dos Dashboard</h1>
+        <p>Click a link below to take the action listed.</p>
+        <a href="/save">Save database</a>
+        <input type="text", id="reload" placeholder="command">
+        <button onclick="reloadCommand()">Reload command</button>
+        <a href="/shutdown" style="color: #ff0000">Shut down bot</a>
+    </body>
+</html>
