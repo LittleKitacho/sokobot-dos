@@ -184,6 +184,7 @@ class Grid {
     private tiles: Tile[][];
 
     constructor(height: number, width: number, boxCount: number, player: Point) {
+        console.log(player);
         this.tiles = [];
         // grid setup
         for (let y = 0; y <= height; y++) {
@@ -201,12 +202,14 @@ class Grid {
         for (let i = 0; i < boxCount; i++) {
             let pos;
             do {
+                console.log(`box ${i}`);
                 pos = this.getRandomSpace(width, height);
-            } while (this.tile(pos).state != TileState.Empty || player == pos || !this.emptySurrounding(pos));
+            } while (this.tile(Object.assign({}, pos)).state != TileState.Empty || player == pos || !this.emptySurrounding(Object.assign({}, pos), player));
             this.set(pos, TileState.Box);
             do {
+                console.log(`space ${i}`);
                 pos = this.getRandomSpace(width, height);
-            } while (this.tile(pos).state != TileState.Empty || player == pos || !this.emptySurrounding(pos));
+            } while (this.tile(Object.assign({}, pos)).state != TileState.Empty || player == pos || !this.emptySurrounding(Object.assign({}, pos), player));
             this.set(pos, TileState.Space);
         }
     }
@@ -218,24 +221,48 @@ class Grid {
         };
     }
 
-    private emptySurrounding(pos: Point): boolean {
+    private emptySurrounding(pos: Point, player: Point): boolean {
         const n: Point = {
             x: pos.x,
-            y: pos.y -1
-        }, s: Point = {
-            x: pos.x,
-            y: pos.y +1
+            y: pos.y -1,
+        }, ne: Point = {
+            x: pos.x -1,
+            y: pos.y -1,
         }, e: Point = {
             x: pos.x -1,
             y: pos.y
+        }, se: Point = {
+            x: pos.x -1,
+            y: pos.y +1
+        }, s: Point = {
+            x: pos.x,
+            y: pos.y +1
+        }, sw: Point = {
+            x: pos.x +1,
+            y: pos.y +1
         }, w: Point = {
             x: pos.x +1,
             y: pos.y
+        }, nw: Point = {
+            x: pos.x +1,
+            y: pos.y -1
         };
         if (this.tile(n).state != TileState.Empty) return false;
-        if (this.tile(s).state != TileState.Empty) return false;
+        if (this.tile(ne).state != TileState.Empty) return false;
         if (this.tile(e).state != TileState.Empty) return false;
+        if (this.tile(se).state != TileState.Empty) return false;
+        if (this.tile(s).state != TileState.Empty) return false;
+        if (this.tile(sw).state != TileState.Empty) return false;
         if (this.tile(w).state != TileState.Empty) return false;
+        if (this.tile(nw).state != TileState.Empty) return false;
+        if (n == player) return false;
+        if (ne == player) return false;
+        if (e == player) return false;
+        if (se == player) return false;
+        if (s == player) return false;
+        if (sw == player) return false;
+        if (w == player) return false;
+        if (nw == player) return false;
         return true;
     }
 
