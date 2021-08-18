@@ -19,6 +19,11 @@ export declare interface InternalWsEvents extends EventEmitter {
     emit(event: 'savedb');
 }
 export const internalEvent: InternalWsEvents = new EventEmitter();
+
+function renderRes(message: string) {
+    return BasePage.replace("<!--BODY-->", message);
+}
+
 const app = Express();
 
 app.get("/", (req, res) => {
@@ -28,14 +33,14 @@ app.get("/", (req, res) => {
 
 app.get('/save', (req, res) => {
     Debug.info("Recieved database save request");
-    res.write(BasePage.replace("<!--BODY-->", "Saving databases..."));
+    res.write(renderRes("Saving databases..."));
     res.end();
     internalEvent.emit("savedb");
 });
 
 app.get("/shutdown", (req, res) => {
     Debug.info("Recieved request to stop bot.");
-    res.write(BasePage.replace("<!--BODY-->", "Stopping bot..."));
+    res.write(renderRes("Stopping bot..."));
     res.end();
     process.exit(0);
 });
@@ -43,14 +48,30 @@ app.get("/shutdown", (req, res) => {
 app.get("/reload/:command", (req, res) => {
     for (const command in Commands) {
         if (req.params.command.toLowerCase() == command.toLowerCase()) {
-            res.write(BasePage.replace("<!--BODY-->", `Reloading command ${command}...`));
+            res.write(renderRes(`Reloading command ${command}...`));
             res.end();
             internalEvent.emit("reload", Commands[command]);
             return;
         }
     }
-    res.write(BasePage.replace("<!--BODY-->", `Could not find command ${req.params.command}.`));
+    res.write(renderRes(`Could not find command ${req.params.command}.`));
     res.end();
+});
+
+app.get("/log", (req, res) => {
+    try {
+        const log = readFileSync("./log", "utf-8");
+        res.write(renderRes(log.split("\n").join("<br>")));
+        res.end();
+    } catch (e) {
+        res.write(renderRes(`Could not retrieve log file: ${e}`));
+        res.end();
+    }
+});
+
+app.get("*", (req, res) => {
+    res.status(404);
+    res.write(renderRes("Not found!"));
 });
 
 const server = app.listen(8000, () => {

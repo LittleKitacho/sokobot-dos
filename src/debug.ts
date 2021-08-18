@@ -1,4 +1,4 @@
-import { appendFileSync } from "fs";
+import { appendFileSync, writeFileSync } from "fs";
 
 enum MessageType {
     Info = "INFO",
@@ -17,9 +17,9 @@ export class Logger {
     private logMessage(type: MessageType, ...args: unknown[]): string {
         const message =  `[${this.module}: ${new Date().toISOString()}] ${type}: ${args.join(" ")}`;
         try {
-            appendFileSync(LogFile, `\n${message}`);
+            appendFileSync(LogFile, `${message}\n`);
         } catch (e) {
-            console.error("Could not write to log file!");
+            console.error("Could not write to log file:", e);
         }
         return message;
     }
@@ -34,4 +34,9 @@ export class Logger {
     public error(...args: unknown[]): void { console.error(this.logMessage(MessageType.Error, args)); }
 }
 
-const LogFile = "./log";
+const LogFile = `./log`;
+try {
+    writeFileSync(LogFile, "");
+} catch (e) {
+    console.error("Could not write log file:", e);
+}

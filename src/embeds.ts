@@ -20,4 +20,7 @@ export const InfoEmbed: MessageEmbedOptions = {
     thumbnail: {
         url: "https://littlekitacho.github.io/sokobot-dos/icon.png"
     },
+    footer: {
+        text: "Based on Sokobot by Polymars - v1.0.1"
+    }
 };
