@@ -3,7 +3,6 @@ import { promisify } from "util";
 import { Button, getGameControls, ResetButtons } from "./buttons";
 import { Commands, CommandData } from "./commands";
 import { Game, MoveDir } from "./game";
-import { existsSync, readFileSync } from "fs";
 import { internalEvent } from "./ws";
 import { Logger } from "./debug";
 import { InfoEmbed } from "./embeds";
@@ -226,8 +225,7 @@ setInterval(async () => {
     await bot.user.setActivity({ name: `a game of Sokoban | /info for info`, type: "PLAYING" });
 }, 300000);
 
-if (!existsSync("token")) { log.error("Could not read file 'token'.  Please make sure it is in the bot's root directory."); process.exit(); }
-bot.login(readFileSync("token", "utf-8")).catch(error => {log.error("Could not log in.", error); process.exit(); });
+bot.login(process.env.TOKEN).catch(error => {log.error("Could not log in.", error); process.exit(); });
 
 process.on("exit", () => {
     bot.user.setStatus("invisible");
