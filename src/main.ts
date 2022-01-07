@@ -11,12 +11,12 @@ import { UserBankDb, UserLevelDb } from "./save";
 
 const wait = promisify(setTimeout);
 
-const Debug = new Logger("BOT");
+const log = new Logger("MAIN");
 const bot = new Client({ intents: [ Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES ] });
 const games: Map<Snowflake, Game> = new Map();
 
 bot.on("ready", async () => {
-    Debug.info("Logged in, performing command sanity check...");
+    log.debug("Logged in, performing command sanity check...");
     bot.user.setActivity({ name: "Starting up...", type: "PLAYING" });
     bot.user.setStatus("idle");
     bot.application.commands.fetch();
@@ -31,7 +31,7 @@ bot.on("ready", async () => {
     await bot.application.commands.fetch();
     await bot.application.commands.cache.forEach(async (command) => {
         if (!Object.values(Commands).includes(command.name as Commands)) {
-            Debug.warn(`Extra command '${command.name}' discarded.`);
+            log.debug(`Extra command '${command.name}' discarded.`);
             await command.delete();
         } else {
             registeredCommands.push(command.name);
@@ -39,14 +39,16 @@ bot.on("ready", async () => {
     });
     for (const name in CommandData) {
         if (!registeredCommands.includes(name)) {
-            Debug.info(`Registering command '${name}'`);
+            log.debug(`Registering command '${name}'`);
             await bot.application.commands.create(CommandData[name]);
         }
     }
-    Debug.success("All commands registered.");
-    await bot.user.setActivity({ name: "the classic game of Sokoban", type: "PLAYING" });
+    log.debug("All commands registered.");
+    let count = 0;
+    bot.guilds.cache.forEach( guild => count += guild.memberCount - 1 );
+    await bot.user.setActivity({ name: `Sokoban with ${count} people!`, type: "PLAYING" });
     await bot.user.setStatus("online");
-    Debug.success("Bot up and running!");
+    log.info("Logged in and all commands registered!");
 });
 
 bot.on('interactionCreate', async interaction => {
@@ -115,7 +117,6 @@ bot.on('interactionCreate', async interaction => {
     } else if (interaction.isButton()) {
         switch (interaction.customId) {
             case Button.Reset:
-                Debug.info(`Resetting data for user ${interaction.user.id}`);
                 UserLevelDb.delete(interaction.user.id);
                 UserBankDb.delete(interaction.user.id);
                 await interaction.update({ content: "All your content has been deleted.", components: [] });
@@ -179,7 +180,7 @@ internalEvent.on("reload", (command) => {
     bot.application.commands.cache.forEach(async rcommand => {
         if (rcommand.name == command) {
             await bot.application.commands.edit(rcommand.id, CommandData[command]);
-            Debug.success(`Reloaded command ${command}`);
+            log.info(`Reloaded command ${command}`);
         }
     });
 });
@@ -219,11 +220,14 @@ async function deleteExistingMessage(game: Game) {
 }
 
 setInterval(async () => {
-    await bot.user.setActivity({ name: `${games.entries.length} games of Sokoban`});
+    let count = 0;
+    await bot.guilds.fetch();
+    bot.guilds.cache.forEach( guild => count += guild.memberCount );
+    await bot.user.setActivity({ name: `a game of Sokoban | /info for info`, type: "PLAYING" });
 }, 300000);
 
-if (!existsSync("token")) { Debug.error("Could not read file 'token'.  Please make sure it is in the bot's root directory."); process.exit(); }
-bot.login(readFileSync("token", "utf-8")).catch(error => {Debug.error("Could not log in.", error); process.exit(); });
+if (!existsSync("token")) { log.error("Could not read file 'token'.  Please make sure it is in the bot's root directory."); process.exit(); }
+bot.login(readFileSync("token", "utf-8")).catch(error => {log.error("Could not log in.", error); process.exit(); });
 
 process.on("exit", () => {
     bot.user.setStatus("invisible");

@@ -4,7 +4,7 @@ import { EventEmitter } from "stream";
 import { Commands } from "./commands";
 import { Logger } from "./debug";
 
-const Debug = new Logger("IWS");
+const log = new Logger("IWS");
 const BasePage = readFileSync("./public/base.html", "utf-8");
 const IndexPage = readFileSync("./public/index.html", "utf-8");
 
@@ -32,16 +32,16 @@ app.get("/", (req, res) => {
 });
 
 app.get('/save', (req, res) => {
-    Debug.info("Recieved database save request");
     res.write(renderRes("Saving databases..."));
     res.end();
+    log.debug("Recieved database save request");
     internalEvent.emit("savedb");
 });
 
 app.get("/shutdown", (req, res) => {
-    Debug.info("Recieved request to stop bot.");
     res.write(renderRes("Stopping bot..."));
     res.end();
+    log.info("Recieved request to stop bot.");
     process.exit(0);
 });
 
@@ -75,17 +75,17 @@ app.get("*", (req, res) => {
 });
 
 const server = app.listen(8000, () => {
-    Debug.info(`Internal web server listening at ${HOST}:${PORT}`);
+    log.info(`Internal web server listening at ${HOST}:${PORT}`);
     process.on("exit", () => {
-        Debug.info("Shutting down internal webserver...");
+        log.info("Shutting down internal webserver...");
         server.removeAllListeners('close');
         server.on('close', () => {
-            Debug.info("Internal webserver shut down.");
+            log.info("Internal webserver shut down.");
         });
         server.close();
     });
 });
 
 server.on('close', () => {
-    Debug.warn("Internal webserver has shut down.");
+    log.warn("Internal webserver has shut down.");
 });

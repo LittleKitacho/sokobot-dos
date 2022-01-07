@@ -3,7 +3,7 @@ import { readFileSync, writeFileSync, existsSync } from "fs";
 import { Logger } from "./debug";
 import { internalEvent } from "./ws";
 
-const Debug = new Logger("DB");
+const log = new Logger("DB");
 
 enum DataType {
     Map
@@ -29,19 +29,19 @@ type FilePath = string;
 class Database<K, V> {
     protected file: FilePath;
     protected store: Map<K, V>;
-    protected logger: Logger;
+    protected log: Logger;
 
     constructor(name: string) {
         this.file = "./".concat(name, ".json");
-        this.logger = Debug.createSubModule(name.concat("DB"));
+        this.log = log.subModule(name.concat("DB"));
         if (!existsSync(this.file)) {
-            this.logger.warn(`Database ${this.file} does not exist.  Writing blank database before continuing.`);
+            this.log.debug(`Database ${this.file} does not exist.  Writing blank database before continuing.`);
             writeFileSync(this.file, JSON.stringify(new Map(), DbReplacer));
         }
         try {
             this.store = JSON.parse(readFileSync(this.file, "utf-8"), DbReviver);
         } catch (e) {
-            this.logger.warn(`Could not read file ${this.file}`, e);
+            this.log.error(`Could not read file ${this.file}`, e);
             this.store = JSON.parse(JSON.stringify(new Map(), DbReplacer), DbReviver);
         }
     }
@@ -65,7 +65,7 @@ class Database<K, V> {
         try {
             writeFileSync(this.file, JSON.stringify(this.store, DbReplacer));
         } catch (e) {
-            this.logger.error(`An error occoured while saving database ${this.file}`, e);
+            this.log.error(`An error occoured while saving database ${this.file}`, e);
             return;
         }
     }
@@ -75,12 +75,12 @@ export const UserLevelDb = new Database<Snowflake, number>("userlevel");
 export const UserBankDb = new Database<Snowflake, number>("userbank");
 
 function saveDatabases() {
-    Debug.info("Saving databases...");
+    log.verbose("Saving databases...");
     UserLevelDb.save();
     UserBankDb.save();
-    Debug.success("Databases saved.");
+    log.verbose("Databases saved.");
 }
 
-process.on("exit", saveDatabases);
+process.on("exit", () => { log.info("Saving databases before shutdown..."); saveDatabases(); });
 setInterval(saveDatabases, 300000);
 internalEvent.on("savedb", saveDatabases);
