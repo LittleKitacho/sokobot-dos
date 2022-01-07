@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-        "outDir": "js",
+        "outDir": "dist",
         "rootDir": "src",
         "sourceMap": true,
         "lib": [
@@ -12,7 +12,7 @@
         "src/**/*"
     ],
     "exclude": [
-        "js",
+        "dist",
         "node_modules",
         "start.js"
     ]

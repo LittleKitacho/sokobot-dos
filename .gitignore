@@ -87,3 +87,6 @@ userlevel.json
 
 # Log files
 log
+
+# Output files
+dist
