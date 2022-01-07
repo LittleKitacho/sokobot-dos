@@ -184,7 +184,6 @@ class Grid {
     private tiles: Tile[][];
 
     constructor(height: number, width: number, boxCount: number, player: Point) {
-        console.log(player);
         this.tiles = [];
         // grid setup
         for (let y = 0; y <= height; y++) {
@@ -202,12 +201,10 @@ class Grid {
         for (let i = 0; i < boxCount; i++) {
             let pos;
             do {
-                console.log(`box ${i}`);
                 pos = this.getRandomSpace(width, height);
             } while (this.tile(Object.assign({}, pos)).state != TileState.Empty || player == pos || !this.emptySurrounding(Object.assign({}, pos), player));
             this.set(pos, TileState.Box);
             do {
-                console.log(`space ${i}`);
                 pos = this.getRandomSpace(width, height);
             } while (this.tile(Object.assign({}, pos)).state != TileState.Empty || player == pos || !this.emptySurrounding(Object.assign({}, pos), player));
             this.set(pos, TileState.Space);
