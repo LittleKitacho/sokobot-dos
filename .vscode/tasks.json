@@ -16,7 +16,8 @@
 				"close": true,
 				"reveal": "silent",
 				"revealProblems": "onProblem"
-			}
+			},
+
 		}, {
 			"type": "shell",
 			"command": "tsc",
@@ -42,6 +43,9 @@
 				"revealProblems": "onProblem",
 				"clear": true
 			}
+		}, {
+			"dependsOn": [ "eslint: lint", "tsc: build" ],
+			"label": "prestart"
 		}
 	]
 }

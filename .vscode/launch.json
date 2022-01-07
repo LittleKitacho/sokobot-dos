@@ -10,7 +10,7 @@
             "name": "Launch Bot",
             "cwd": "${workspaceFolder}",
             "program": "start.js",
-            "preLaunchTask": "tsc: build",
+            "preLaunchTask": "prestart",
             "outputCapture": "std",
             "console": "internalConsole",
             "internalConsoleOptions": "openOnSessionStart",
