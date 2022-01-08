@@ -7,10 +7,7 @@
 			"problemMatcher": [
 				"$tsc"
 			],
-			"group": {
-				"kind": "build",
-				"isDefault": true
-			},
+			"group": "build",
 			"label": "tsc: build",
 			"presentation": {
 				"close": true,
@@ -35,17 +32,24 @@
 		}, {
 			"type": "shell",
 			"command": "npx",
+			"problemMatcher": "$eslint-stylish",
 			"args": ["eslint", "."],
 			"group": "none",
 			"label": "eslint: lint",
 			"presentation": {
+				"close": true,
 				"reveal": "silent",
 				"revealProblems": "onProblem",
+				"showReuseMessage": false,
 				"clear": true
 			}
 		}, {
 			"dependsOn": [ "eslint: lint", "tsc: build" ],
-			"label": "prestart"
+			"label": "build and lint",
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			}
 		}
 	]
 }
