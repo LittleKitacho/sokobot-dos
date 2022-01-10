@@ -2,14 +2,14 @@ import Express from "express";
 import { readFileSync } from "fs";
 import { EventEmitter } from "stream";
 import { Commands } from "./commands";
-import { Logger } from "./debug";
+import globalLog from "./debug";
 
-const log = new Logger("IWS");
+const log = globalLog.child({ service: "webserver" });
 const BasePage = readFileSync("./public/base.html", "utf-8");
 const IndexPage = readFileSync("./public/index.html", "utf-8");
 
 const HOST = "localhost";
-const PORT = 8000;
+const PORT = process.env.PORT ? process.env.PORT : 8000;
 
 export declare interface InternalWsEvents extends EventEmitter {
     on(event: 'reload', listener: (command: Commands) => void);
@@ -27,51 +27,44 @@ function renderRes(message: string) {
 const app = Express();
 
 app.get("/", (req, res) => {
-    res.write(IndexPage);
-    res.end();
+    res.send(IndexPage);
 });
 
 app.get('/save', (req, res) => {
-    res.write(renderRes("Saving databases..."));
-    res.end();
     log.debug("Recieved database save request");
+    res.send(renderRes("Saving databases..."));
     internalEvent.emit("savedb");
 });
 
 app.get("/shutdown", (req, res) => {
-    res.write(renderRes("Stopping bot..."));
-    res.end();
-    log.info("Recieved request to stop bot.");
+    log.verbose("Recieved request to stop bot.");
+    res.send(renderRes("Stopping bot..."));
     process.exit(0);
 });
 
 app.get("/reload/:command", (req, res) => {
     for (const command in Commands) {
         if (req.params.command.toLowerCase() == command.toLowerCase()) {
-            res.write(renderRes(`Reloading command ${command}...`));
-            res.end();
+            res.send(renderRes(`Reloading command ${command}...`));
             internalEvent.emit("reload", Commands[command]);
             return;
         }
     }
-    res.write(renderRes(`Could not find command ${req.params.command}.`));
-    res.end();
+    res.send(renderRes(`Could not find command ${req.params.command}.`));
 });
 
 app.get("/log", (req, res) => {
     try {
         const log = readFileSync("./log", "utf-8");
-        res.write(renderRes(log.split("\n").join("<br>")));
-        res.end();
+        res.send(renderRes(log.split("\n").join("<br>")));
     } catch (e) {
-        res.write(renderRes(`Could not retrieve log file: ${e}`));
-        res.end();
+        res.send(renderRes(`Could not retrieve log file:<br>${e}`));
     }
 });
 
 app.get("*", (req, res) => {
     res.status(404);
-    res.write(renderRes("Not found!"));
+    res.send(renderRes("Not found!"));
 });
 
 const server = app.listen(8000, () => {
@@ -87,5 +80,5 @@ const server = app.listen(8000, () => {
 });
 
 server.on('close', () => {
-    log.warn("Internal webserver has shut down.");
+    log.warn("Internal webserver has shut down unexpectedly!");
 });

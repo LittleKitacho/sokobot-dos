@@ -10,6 +10,7 @@
             "name": "Launch Bot",
             "cwd": "${workspaceFolder}",
             "program": "start.js",
+            "args": ["--no-emit"],
             "preLaunchTask": "build and lint",
             "outputCapture": "std",
             "console": "internalConsole",

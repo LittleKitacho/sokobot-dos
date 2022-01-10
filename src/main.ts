@@ -4,18 +4,18 @@ import { Button, getGameControls, ResetButtons } from "./buttons";
 import { Commands, CommandData } from "./commands";
 import { Game, MoveDir } from "./game";
 import { internalEvent } from "./ws";
-import { Logger } from "./debug";
+import globalLog from "./debug";
 import { InfoEmbed } from "./embeds";
 import { UserBankDb, UserLevelDb } from "./save";
 
 const wait = promisify(setTimeout);
 
-const log = new Logger("MAIN");
+const log = globalLog.child({ service: "main" });
 const bot = new Client({ intents: [ Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES ] });
 const games: Map<Snowflake, Game> = new Map();
 
 bot.on("ready", async () => {
-    log.debug("Logged in, performing command sanity check...");
+    log.verbose("Logged in, performing command sanity check...");
     bot.user.setActivity({ name: "Starting up...", type: "PLAYING" });
     bot.user.setStatus("idle");
     bot.application.commands.fetch();
@@ -24,6 +24,7 @@ bot.on("ready", async () => {
     await bot.guilds.cache.forEach(async g => {
         await g.commands.fetch();
         await g.commands.cache.forEach(async c => {
+            log.debug(`Deleting extranious command ${c.name}`);
             await c.delete();
         });
     });
@@ -42,12 +43,12 @@ bot.on("ready", async () => {
             await bot.application.commands.create(CommandData[name]);
         }
     }
-    log.debug("All commands registered.");
+    log.verbose("All commands registered.");
     let count = 0;
     bot.guilds.cache.forEach( guild => count += guild.memberCount - 1 );
     await bot.user.setActivity({ name: `Sokoban with ${count} people!`, type: "PLAYING" });
     await bot.user.setStatus("online");
-    log.info("Logged in and all commands registered!");
+    log.info("Logged in and commands ready!");
 });
 
 bot.on('interactionCreate', async interaction => {
@@ -58,6 +59,7 @@ bot.on('interactionCreate', async interaction => {
         switch (interaction.commandName) {
             case Commands.Ping: {
                 const heartbeat = Date.now() - interaction.createdTimestamp;
+                log.debug(`Heartbeat ${heartbeat.toString()}`);
                 await interaction.reply(`:ping_pong: Pong!\nHeartbeat: **${heartbeat.toString()}**ms`);
                 break;
             }
@@ -118,6 +120,7 @@ bot.on('interactionCreate', async interaction => {
             case Button.Reset:
                 UserLevelDb.delete(interaction.user.id);
                 UserBankDb.delete(interaction.user.id);
+                log.debug(`Deleted data for user ${interaction.user.id}`);
                 await interaction.update({ content: "All your content has been deleted.", components: [] });
                 return;
             case Button.ResetCancel: {
@@ -179,7 +182,7 @@ internalEvent.on("reload", (command) => {
     bot.application.commands.cache.forEach(async rcommand => {
         if (rcommand.name == command) {
             await bot.application.commands.edit(rcommand.id, CommandData[command]);
-            log.info(`Reloaded command ${command}`);
+            log.verbose(`Reloaded command ${command}`);
         }
     });
 });

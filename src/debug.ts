@@ -1,42 +1,63 @@
-import { appendFileSync, writeFileSync } from "fs";
+import { createLogger, Logger, format, transports, addColors } from "winston";
 
-enum MessageType {
-    Info = "INFO",
-    Success = "SUCCESS",
-    Warning = "WARN",
-    Error = "ERROR"
+const levels = {
+    levels: {
+        error: 0,
+        warn: 1,
+        info: 2,
+        verbose: 3,
+        debug: 4
+    },
+    colors: {
+        error: "red",
+        warn: "yellow",
+        info: "blue",
+        verbose: "cyan",
+        debug: "green"
+    }
+};
+addColors(levels.colors);
+
+function getFileDate() {
+    const date = new Date();
+    return `${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}-${date.getHours()}-${date.getMinutes()}-${date.getSeconds()}`;
 }
 
-export class Logger {
-    private module: string;
+const isDevelopment = process.env.NODE_ENV === "development";
+const isSilent = process.argv.includes("-s") || process.argv.includes("--silent");
+const isVerbose = process.argv.includes("-v") || process.argv.includes("--verbose");
+const onlyError = process.argv.includes("-e") || process.argv.includes("--only-error");
+const noEmit = process.argv.includes("-E") || process.argv.includes("--no-emit");
+console.log(isDevelopment, isSilent, isVerbose, onlyError, noEmit);
 
-    constructor (module: string) {
-        this.module = module.toUpperCase();
-    }
+const globalLog: Logger = createLogger({
+    levels: levels.levels,
+    defaultMeta: { service: "global" },
+    format: format.combine(
+        format.errors(),
+        format.timestamp(),
+        format.json()
+    ),
+    transports: [
+        new transports.Console({
+            level: isDevelopment ? "debug" : ( isVerbose ? "verbose" : "info"),
+            format: format.combine( format.colorize(), format.simple() ),
+            silent: isSilent
+        })
+    ],
+    exitOnError: true
+});
 
-    private logMessage(type: MessageType, ...args: unknown[]): string {
-        const message =  `[${this.module}: ${new Date().toISOString()}] ${type}: ${args.join(" ")}`;
-        try {
-            appendFileSync(LogFile, `${message}\n`);
-        } catch (e) {
-            console.error("Could not write to log file:", e);
-        }
-        return message;
-    }
+if (!onlyError && !noEmit) globalLog.add( new transports.File({
+    level: "verbose",
+    filename: `logs/full-${getFileDate()}.log`
+}));
 
-    public createSubModule(submodule: string): Logger {
-        return new Logger(this.module.concat("/", submodule));
-    }
+if (!noEmit) globalLog.add( new transports.File({
+    level: "warn",
+    filename: `logs/error-${getFileDate()}.log`,
+    handleExceptions: true,
+    handleRejections: true,
+}));
 
-    public info(...args: unknown[]): void { console.log(this.logMessage(MessageType.Info, args)); }
-    public success(...args: unknown[]): void { console.log(this.logMessage(MessageType.Success, args)); }
-    public warn(...args: unknown[]): void { console.warn(this.logMessage(MessageType.Warning, args)); }
-    public error(...args: unknown[]): void { console.error(this.logMessage(MessageType.Error, args)); }
-}
-
-const LogFile = `./log`;
-try {
-    writeFileSync(LogFile, "");
-} catch (e) {
-    console.error("Could not write log file:", e);
-}
+export default globalLog;

@@ -78,3 +78,10 @@ listed below:
 
 There are some additional features planned for the dashboard, but those will
 come at a later time.
+
+### Command-line Arguments
+
+- `-s`/`--silent` - Run silently (don't emit logs to console)
+- `-v`/`--verbose` - Run verbosely (emit more logs to console)
+- `-e`/`--only-error` - Only emit errors log file
+- `-E`/`--no-emit` - Don't emit log files.

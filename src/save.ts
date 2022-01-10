@@ -1,9 +1,10 @@
 import { Snowflake } from "discord.js";
 import { readFileSync, writeFileSync, existsSync } from "fs";
-import { Logger } from "./debug";
 import { internalEvent } from "./ws";
+import globalLog from "./debug";
+import { Logger } from "winston";
 
-const log = new Logger("DB");
+const log = globalLog.child({ service: "database" });
 
 enum DataType {
     Map
@@ -33,15 +34,15 @@ class Database<K, V> {
 
     constructor(name: string) {
         this.file = "./".concat(name, ".json");
-        this.log = log.subModule(name.concat("DB"));
+        this.log = log.child({ service: `db-${name}` });
         if (!existsSync(this.file)) {
-            this.log.debug(`Database ${this.file} does not exist.  Writing blank database before continuing.`);
+            this.log.warn(`Database ${this.file} does not exist.  Writing blank database before continuing.`);
             writeFileSync(this.file, JSON.stringify(new Map(), DbReplacer));
         }
         try {
             this.store = JSON.parse(readFileSync(this.file, "utf-8"), DbReviver);
         } catch (e) {
-            this.log.error(`Could not read file ${this.file}`, e);
+            this.log.error(`Could not read file ${this.file}, continuing with blank database.`, e);
             this.store = JSON.parse(JSON.stringify(new Map(), DbReplacer), DbReviver);
         }
     }
@@ -75,7 +76,7 @@ export const UserLevelDb = new Database<Snowflake, number>("userlevel");
 export const UserBankDb = new Database<Snowflake, number>("userbank");
 
 function saveDatabases() {
-    log.verbose("Saving databases...");
+    log.debug("Saving databases...");
     UserLevelDb.save();
     UserBankDb.save();
     log.verbose("Databases saved.");
