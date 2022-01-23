@@ -83,5 +83,7 @@ function saveDatabases() {
 }
 
 process.on("exit", () => { log.info("Saving databases before shutdown..."); saveDatabases(); });
+
 setInterval(saveDatabases, 300000);
 internalEvent.on("savedb", saveDatabases);
+
