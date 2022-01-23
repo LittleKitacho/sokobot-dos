@@ -202,11 +202,11 @@ class Grid {
             let pos;
             do {
                 pos = this.getRandomSpace(width, height);
-            } while (this.tile(Object.assign({}, pos)).state != TileState.Empty || player == pos || !this.emptySurrounding(Object.assign({}, pos), player));
+            } while (this.tile(Object.assign({}, pos)).state !== TileState.Empty || player.x === pos.x || player.y === pos.y || !this.emptySurrounding(Object.assign({}, pos), player));
             this.set(pos, TileState.Box);
             do {
                 pos = this.getRandomSpace(width, height);
-            } while (this.tile(Object.assign({}, pos)).state != TileState.Empty || player == pos || !this.emptySurrounding(Object.assign({}, pos), player));
+            } while (this.tile(Object.assign({}, pos)).state !== TileState.Empty || player.x === pos.x || player.y === pos.y || !this.emptySurrounding(Object.assign({}, pos), player));
             this.set(pos, TileState.Space);
         }
     }
@@ -244,22 +244,14 @@ class Grid {
             x: pos.x +1,
             y: pos.y -1
         };
-        if (this.tile(n).state != TileState.Empty) return false;
-        if (this.tile(ne).state != TileState.Empty) return false;
-        if (this.tile(e).state != TileState.Empty) return false;
-        if (this.tile(se).state != TileState.Empty) return false;
-        if (this.tile(s).state != TileState.Empty) return false;
-        if (this.tile(sw).state != TileState.Empty) return false;
-        if (this.tile(w).state != TileState.Empty) return false;
-        if (this.tile(nw).state != TileState.Empty) return false;
-        if (n == player) return false;
-        if (ne == player) return false;
-        if (e == player) return false;
-        if (se == player) return false;
-        if (s == player) return false;
-        if (sw == player) return false;
-        if (w == player) return false;
-        if (nw == player) return false;
+        if (n.x === player.x || n.y === player.y) return false;
+        if (ne.x === player.x || ne.y === player.y) return false;
+        if (e.x === player.x || e.y === player.y) return false;
+        if (se.x === player.x || se.y === player.y) return false;
+        if (s.x === player.x || s.y === player.y) return false;
+        if (sw.x === player.x || sw.y === player.y) return false;
+        if (w.x === player.x || w.y === player.y) return false;
+        if (nw.x === player.x || nw.y === player.y) return false;
         return true;
     }
 
