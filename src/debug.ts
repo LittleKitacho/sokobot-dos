@@ -28,7 +28,6 @@ const isSilent = process.argv.includes("-s") || process.argv.includes("--silent"
 const isVerbose = process.argv.includes("-v") || process.argv.includes("--verbose");
 const onlyError = process.argv.includes("-e") || process.argv.includes("--only-error");
 const noEmit = process.argv.includes("-E") || process.argv.includes("--no-emit");
-console.log(isDevelopment, isSilent, isVerbose, onlyError, noEmit);
 
 const globalLog: Logger = createLogger({
     levels: levels.levels,
