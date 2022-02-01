@@ -65,7 +65,7 @@ bot.on('interactionCreate', async interaction => {
                 break;
 
             case Commands.Reset:
-                await interaction.reply({ content: ":bangbang: **Hey!  You are about to delete all your data!** This includes:\n- Current Level\n- All coins in your bank\n- Purchaced themes\n- Purchaced icons\n**Press 'Reset all my data.' to confirm deleting your data.  Otherwise, press 'Cancel'", components: [ResetButtons], ephemeral: true });
+                await interaction.reply({ content: ":bangbang: **Hey!  You are about to delete all your data!** This includes:\n- Current Level\n- All coins in your bank\n- Purchaced themes\n- Purchaced icons\n**Press 'Reset all my data.' to confirm deleting your data.  Otherwise, press 'Cancel'**", components: [ResetButtons], ephemeral: true });
                 return;
 
             case Commands.Bank: {
