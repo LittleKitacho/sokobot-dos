@@ -18,10 +18,8 @@ const levels = {
 };
 addColors(levels.colors);
 
-function getFileDate() {
-    const date = new Date();
-    return `${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}-${date.getHours()}-${date.getMinutes()}-${date.getSeconds()}`;
-}
+const date = new Date();
+export const fileName = `${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}-${date.getHours()}-${date.getMinutes()}-${date.getSeconds()}`;
 
 const isDevelopment = process.env.NODE_ENV === "development";
 const isSilent = process.argv.includes("-s") || process.argv.includes("--silent");
@@ -49,12 +47,12 @@ const globalLog: Logger = createLogger({
 
 if (!onlyError && !noEmit) globalLog.add( new transports.File({
     level: "verbose",
-    filename: `logs/full-${getFileDate()}.log`
+    filename: `logs/full-${fileName}.log`
 }));
 
 if (!noEmit) globalLog.add( new transports.File({
     level: "warn",
-    filename: `logs/error-${getFileDate()}.log`,
+    filename: `logs/error-${fileName}.log`,
     handleExceptions: true,
     handleRejections: true,
 }));
