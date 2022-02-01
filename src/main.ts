@@ -226,3 +226,10 @@ bot.login(process.env.TOKEN).catch(error => {log.error("Could not log in.", erro
 process.on("exit", () => {
     bot.user.setStatus("invisible");
 });
+
+const createExitHandler = (signal) => { return () => { log.debug(`Handling terminate signal ${signal}`); process.exit(); }; };
+process.on("SIGTERM", createExitHandler("SIGTERM"));
+process.on("SIGINT", createExitHandler("SIGINT"));
+process.on("SIGKILL", createExitHandler("SIGKILL"));
+process.on("SIGUSR1", createExitHandler("SIGUSR1"));
+process.on("SIGUSR2", createExitHandler("SIGUSR2"));
