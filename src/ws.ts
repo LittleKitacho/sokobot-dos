@@ -53,14 +53,15 @@ app.get("/reload/:command", (req, res) => {
     res.send(renderRes(`Could not find command ${req.params.command}.`));
 });
 
-app.get("/log", (req, res) => {
-    try {
-        const log = readFileSync("./log", "utf-8");
-        res.send(renderRes(log.split("\n").join("<br>")));
-    } catch (e) {
-        res.send(renderRes(`Could not retrieve log file:<br>${e}`));
-    }
-});
+//// FIXME logging rewrite breaks viewing log from webserver
+// app.get("/log", (req, res) => {
+//     try {
+//         const log = globalLog.read();
+//         res.send(renderRes(log.replace("\n","<br>")));
+//     } catch (e) {
+//         res.send(renderRes(`Could not retrieve log file:<br>${e}`));
+//     }
+// });
 
 app.get("*", (req, res) => {
     res.status(404);
