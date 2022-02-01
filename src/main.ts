@@ -224,7 +224,7 @@ setInterval(async () => {
 bot.login(process.env.TOKEN).catch(error => {log.error("Could not log in.", error); process.exit(); });
 
 process.on("exit", () => {
-    bot.user.setStatus("invisible");
+    if (bot.user !== null) if (bot.user.setStatus !== null) bot.user.setStatus("invisible");
 });
 
 const createExitHandler = (signal) => { return () => { log.debug(`Handling terminate signal ${signal}`); process.exit(); }; };
