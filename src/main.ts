@@ -188,8 +188,8 @@ function getGameEmbed(interaction: Interaction, game: Game): MessageEmbed[] {
         .setTitle(game.win() ? "You win!" : `Level ${game.level}`)
         .setDescription(game.render())
         .setColor(game.win() ? "#3ba55d" : game.getHexColor())
-        .setFooter("Based off of Sokobot by PolyMars")
-        .setAuthor(interaction.user.username, interaction.user.avatarURL());
+        .setFooter({ text: "Based off of Sokobot by PolyMars" })
+        .setAuthor({ name: interaction.user.username, iconURL: interaction.user.avatarURL() });
     if (game.win()) {
         embed.addField("You won, congratulations!", "Press Continue to keep playing, or Stop to stop playing.  Your current level is saved after each level.");
         embed.addField(`Coins gained: :coin: ${5 + (game.level * 5)}`, `Total coins: :coin: ${UserBankDb.get(interaction.user.id)}`);
