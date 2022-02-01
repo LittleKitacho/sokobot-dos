@@ -16,9 +16,8 @@ const games: Map<Snowflake, Game> = new Map();
 
 bot.on("ready", async () => {
     log.verbose("Logged in, performing command sanity check...");
-    bot.user.setActivity({ name: "Starting up...", type: "PLAYING" });
-    bot.user.setStatus("idle");
-    bot.application.commands.fetch();
+    await bot.user.setPresence({ status: "dnd", activities: [{ name: "Starting up...", type: "PLAYING" }] });
+    await bot.application.commands.fetch();
     const registeredCommands = [];
     await bot.guilds.fetch();
     await bot.guilds.cache.forEach(async g => {
@@ -44,10 +43,7 @@ bot.on("ready", async () => {
         }
     }
     log.verbose("All commands registered.");
-    let count = 0;
-    bot.guilds.cache.forEach( guild => count += guild.memberCount - 1 );
-    await bot.user.setActivity({ name: `Sokoban with ${count} people!`, type: "PLAYING" });
-    await bot.user.setStatus("online");
+    await bot.user.setPresence({ status: "online", activities: [{ name: `a round of Sokoban | /info`, type: "PLAYING" }] });
     log.info("Logged in and commands ready!");
 });
 
@@ -222,10 +218,7 @@ async function deleteExistingMessage(game: Game) {
 }
 
 setInterval(async () => {
-    let count = 0;
-    await bot.guilds.fetch();
-    bot.guilds.cache.forEach( guild => count += guild.memberCount );
-    await bot.user.setActivity({ name: `a game of Sokoban | /info for info`, type: "PLAYING" });
+    await bot.user.setActivity({ name: `a round of Sokoban | /info`, type: "PLAYING" });
 }, 300000);
 
 bot.login(process.env.TOKEN).catch(error => {log.error("Could not log in.", error); process.exit(); });
