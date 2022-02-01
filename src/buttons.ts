@@ -34,25 +34,21 @@ export function getGameControls(game: Game): MessageActionRow[] {
     const actions = new MessageActionRow();
 
     directions.addComponents([new MessageButton({
-        label: "Up",
         customId: Button.Up,
         style: game.legalMove(MoveDir.Up) ? "PRIMARY" : "SECONDARY",
         disabled: !game.legalMove(MoveDir.Up),
         emoji: '⬆️'
     }), new MessageButton({
-        label: "Down",
         customId: Button.Down,
         style: game.legalMove(MoveDir.Down) ? "PRIMARY" : "SECONDARY",
         disabled: !game.legalMove(MoveDir.Down),
         emoji: '⬇️'
     }), new MessageButton({
-        label: "Left",
         customId: Button.Left,
         style: game.legalMove(MoveDir.Left) ? "PRIMARY" : "SECONDARY",
         disabled: !game.legalMove(MoveDir.Left),
         emoji: '⬅️'
     }), new MessageButton({
-        label: "Right",
         customId: Button.Right,
         style: game.legalMove(MoveDir.Right) ? "PRIMARY" : "SECONDARY",
         disabled: !game.legalMove(MoveDir.Right),
