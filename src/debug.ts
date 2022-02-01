@@ -42,6 +42,12 @@ const globalLog: Logger = createLogger({
             silent: isSilent
         })
     ],
+    exceptionHandlers: [
+        new transports.Console({
+            level: "error",
+            format: format.combine( format.colorize(), format.simple() ),
+        })
+    ],
     exitOnError: true
 });
 
