@@ -4,17 +4,12 @@
   "description": "",
   "main": "start.js",
   "scripts": {
-    "lint": "npx eslint .",
-
-    "prebuild": "npm run lint",
-    "build": "npx tsc",
-    "dryrun": "npx tsc --no-emit",
-
+    "build": "npx gulp",
     "prestart": "npm run build",
-    "start": "node start.js",
-    
-    "cleanup": "rm -r logs",
-    "cleanup-build": "rm -r dist"
+    "start": "node .",
+    "start-nolog": "npm run prestart && node . --no-emit",
+    "start-silent": "npm run prestart && node . --silent",
+    "start-noout": "npm run prestart && node . --no-emit --silent"
   },
   "author": "LittleKitacho",
   "license": "MIT",

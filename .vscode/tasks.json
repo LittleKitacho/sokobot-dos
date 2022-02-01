@@ -3,53 +3,22 @@
 	"tasks": [
 		{
 			"type": "shell",
-			"command": "tsc",
+			"command": "npm",
+			"args": ["run", "build"],
 			"problemMatcher": [
-				"$tsc"
+				"$tsc",
+				"$eslint-stylish"
 			],
-			"group": "build",
-			"label": "tsc: build",
+			"group": {
+				"isDefault": true,
+				"kind": "build"
+			},
+			"label": "build",
 			"presentation": {
 				"close": true,
 				"reveal": "silent",
 				"revealProblems": "onProblem"
 			},
-
-		}, {
-			"type": "shell",
-			"command": "tsc",
-			"args": ["-w"],
-			"problemMatcher": [ "$tsc-watch" ],
-			"group": "build",
-			"label": "tsc: watch",
-			"presentation": {
-				"close": true,
-				"reveal": "always",
-				"revealProblems": "never",
-				"showReuseMessage": false,
-				"clear": true
-			}
-		}, {
-			"type": "shell",
-			"command": "npx",
-			"problemMatcher": "$eslint-stylish",
-			"args": ["eslint", "."],
-			"group": "none",
-			"label": "eslint: lint",
-			"presentation": {
-				"close": true,
-				"reveal": "silent",
-				"revealProblems": "onProblem",
-				"showReuseMessage": false,
-				"clear": true
-			}
-		}, {
-			"dependsOn": [ "eslint: lint", "tsc: build" ],
-			"label": "build and lint",
-			"group": {
-				"kind": "build",
-				"isDefault": true
-			}
-		}
+		},
 	]
 }
